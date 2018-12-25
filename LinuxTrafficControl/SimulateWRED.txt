@@ -1,0 +1,31 @@
+Simulate weighted random early detection using traffic control
+
+1. tree structure
+root: htb (qdisc)
+        |
+       1:1 htb (class) with main control   <--- filter mounted here
+    /       \
+   1:11     1:12 htb (class) with sub control
+    |        |
+    11       12 red (qdisc)  
+
+
+2. steps
+    2.1 create root qdisc
+        sudo tc qdisc add dev e2065bcebb454_l root handle 1: htb default 11
+    2.2 create 1:1 class
+        sudo tc class add dev e2065bcebb454_l parent 1: classid 1:1 htb rate 10Mbit burst 1500000
+    2.3 create sub class
+        sudo tc class add dev e2065bcebb454_l parent 1:1 classid 1:11 htb rate 10Mbit burst 1500000
+    2.4 create red qdisc
+        sudo tc qd add dev e2065bcebb454_l parent 1:11 handle 111: red limit 4000 min 300 max 900 avpkt 10 burst 55 ecn adaptive bandwidth 10Mbit probability 0.2
+    2.5 create filter
+        sudo tc filter add dev e2065bcebb454_l parent 1: prio 10001 protocol ip u32 match ip tos 0x00 0xff flowid 1:11
+
+3. reference
+    * Linux 高级流控 https://www.ibm.com/developerworks/cn/linux/1412_xiehy_tc/
+    * tc-red(8) http://man7.org/linux/man-pages/man8/tc-red.8.html
+    * u32 filter http://tldp.org/HOWTO/Adv-Routing-HOWTO/lartc.adv-filter.u32.html
+
+4. todo
+    * using generic random early detection
