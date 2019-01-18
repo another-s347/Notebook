@@ -1,0 +1,13 @@
+Configure simple testing network for virtualbox Windows VM
+(to connect with ovs-docker container)
+
+1. create linux virtual network device (port)
+    `ip tuntap add w1 mode tap`
+    `ip link set w1 up`
+    `ifconfig w1 xxx.xxx.xxx.xxx`
+2. config ovs
+    `sudo ovs-vsctl add-port ovs-br1 w1`
+3. config VM
+    3.1 use bridged adapter
+    3.2 select 'w1'
+    3.3 in vm assign static ip address
