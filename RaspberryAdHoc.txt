@@ -1,0 +1,32 @@
+Set up wireless ad hoc network between Raspberry Pi and PC
+
+Raspberry Pi 3b+ (Raspbian) set up: https://wiki.debian.org/WiFi/AdHoc
+    1. vim /etc/network/interfaces.d/wlan0
+    2. input ----
+
+auto wlan0
+iface wlan0 inet static
+    address 192.168.1.1
+    netmask 255.255.255.0
+    wireless-channel 1
+    wireless-essid MYNETWORK
+    wireless-mode ad-hoc
+
+    2. ----
+    3. reboot
+    4. assign static ip address: 
+    # ifconfig wlan0 192.168.1.1 netmask 255.255.255.0
+
+Manjaro set up: https://wiki.archlinux.org/index.php/ad-hoc_networking
+    1. set mode to ibss(ad-hoc)
+    # iw interface set type ibss
+    2. enable interface
+    # rfkill unblock wifi
+    # ip link set interface up
+    3. join ad-hoc network
+    # iw interface ibss join your_ssid frequency
+    * 2.4Ghz channel 1 == frequency 2412 Mhz
+    4. assign static ip address
+    # ifconfig wlan0 192.168.1.2 netmask 255.255.255.0
+    5. test
+    # ping 192.168.1.1
