@@ -1,0 +1,20 @@
+connect to naked wireless network and add wireless interface to openvswitch
+
+ref:http://fosshelp.blogspot.com/2014/10/add-eth0-wlan0-openvswitch-bridge.html
+ref:http://blog.oddbit.com/2014/05/23/solved-open-vswitch-and-persis/
+
+1. connect using anything (wpa, network manager, ...)
+2. get ip address using ifconfig
+# ifconfig
+3. get default gateway
+# route -n
+4. add to ovs
+# ovs-vsctl add-port br1 wlp8s0
+5. set ip address
+# ifconfig br1 192.168.0.103
+6. set route
+# route add default gw 192.168.0.1 br1
+7. zero out wireless interface
+# ifconfig wlp8s0 0
+8. !important! rewrite br1's mac address to be the same as wlp8s0's. Observe arp issue without this step.
+# ovs-vsctl set bridge br-ex other-config:hwaddr=$MACADDR
