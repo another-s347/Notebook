@@ -1,0 +1,18 @@
+use openvswitch with ad hoc wireless network
+
+1. set mode to ibss(ad-hoc)
+# iw interface set type ibss
+2. enable interface
+# rfkill unblock wifi
+# ip link set interface up
+3. join ad-hoc network
+# iw interface ibss join your_ssid frequency
+* 2.4Ghz channel 1 == frequency 2412 Mhz
+4. add to openvswitch
+# ovs-vsctl add-port br1 wlp8s0
+5. clear wlp8s0
+# ifconfig wlp8s0 0
+6. assign static ip address to br1
+# ifconfig br1 192.168.1.2 netmask 255.255.255.0
+7. test
+# ping 192.168.1.1
