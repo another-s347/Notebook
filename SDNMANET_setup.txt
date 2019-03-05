@@ -1,0 +1,69 @@
+steps to set up environment for Wireless SDN Mobile Ad Hoc Network: from Theory to Practive
+
+1. Set up wireless ad hoc and test
+
+Result:
+
+physical host 1:
+wlan1:
+    ip  = 192.168.1.1
+    mac = mac_s1
+
+physical host 2:
+wlan2:
+    ip  = 192.168.1.2
+    mac = mac_s2
+
+2. Add wireless interface to ovs bridge, modify ip and mac address to create switches
+
+Result:
+
+physical host 1:
+ovs_br:                 -- act as switch 1
+    ip  = 192.168.1.1
+    mac = mac_s1
+wlan1:
+    ip  = 0
+    mac = mac_s1
+
+physical host 2:
+ovs_br:                 -- act as switch 2
+    ip  = 192.168.1.2
+    mac = mac_s2
+wlan2:
+    ip  = 0
+    mac = mac_s2
+
+By now, ping 192.168.1.2 on host 1 should still work
+
+3. Using ovs internal port as logical host
+
+# ovs-vsctl add-port br1 int1 -- set Interface int1 type=internal
+# ifconfig int1 192.168.1.x netmask 255.255.255.0
+
+Result:
+
+physical host1:                    physical host 2:
+(logical host)                     (switch)  (logical host)
+int1 -- ovs_br (switch)            ovs_br -- int1
+           |                          |
+         wlan1 --[ad hoc network]-- wlan2 
+
+or:
+
+h1 -- s1 -- s2 -- h2
+
+h1:
+    ip  = 192.168.1.3
+    mac = mac_h1
+s1:
+    ip  = 192.168.1.1
+    mac = mac_s1
+h2:
+    ip  = 192.168.1.4
+    mac = mac_h2
+s2:
+    ip  = 192.168.1.2
+    mac = mac_s2
+
+4. It is safe to remove ip address for s1 and s2
