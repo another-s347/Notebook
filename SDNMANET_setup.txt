@@ -67,3 +67,25 @@ s2:
     mac = mac_s2
 
 4. It is safe to remove ip address for s1 and s2
+
+Heads up:
+
+1. ovs port id
+
+"We assume there is only one Wi-Fi port on a device and its port number is always 1."
+so be sure add wlan1 to port 1:
+# ovs-vsctl add-port br1 wlan0 -- set Interface wlan0 ofport=1
+
+Demo with more details:
+
+physical host1:                    physical host 2:
+(logical host)                     (switch)  (logical host)
+int1 -- ovs_br (switch)            ovs_br -- int1
+           |                          |
+         wlan1 --[ad hoc network]-- wlan2 
+
+   ethernet     wifi     ethernet
+h1 --------> s1 ----> s2 --------> h2
+
+s1: source edge
+s2: destination edge
